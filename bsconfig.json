@@ -23,7 +23,8 @@
   "suffix": ".bs.js",
   "namespace": false,
   "bs-dependencies": [
-    "reason-react"
+    "reason-react",
+    "relude"
   ],
   "warnings": {
     "error": "+a"
