@@ -4,15 +4,15 @@
 
 # Node
 npm-debug.log
-/node_modules/
+node_modules/
 
 # Parcel
-/.cache
+.cache/
 
 # Mac
 .DS_Store
 
 # Project files
 *.bs.js
-/dist
-/lib/bs
+dist/
+lib/bs/
