@@ -1,0 +1,30 @@
+{
+  "name": "relude-reason-react",
+  "version": "0.1.0",
+  "scripts": {
+    "build": "bsb -make-world",
+    "watch": "bsb -make-world -w",
+    "clean": "bsb -clean-world",
+    "test": "npm ",
+    "server:demo": "parcel examples/demo/index.html"
+  },
+  "keywords": [
+    "BuckleScript"
+  ],
+  "author": "",
+  "license": "MIT",
+  "peerDependencies": {
+    "react": "^16.8.1",
+    "react-dom": "^16.8.1",
+    "reason-react": ">=0.7.0"
+  },
+  "devDependencies": {
+    "bs-platform": "^5.0.3",
+    "bsb-js": "~1.1.7",
+    "npm-run-all": "~4.1.5",
+    "parcel-bundler": "~1.12.3",
+    "react": "^16.8.1",
+    "react-dom": "^16.8.1",
+    "reason-react": ">=0.7.0"
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "name": "relude-reason-react",
+  "reason": {
+    "react-jsx": 3
+  },
+  "sources": [
+    {
+      "dir": "src",
+      "subdirs": true
+    },
+    {
+      "dir": "examples",
+      "subdirs": true,
+      "type": "dev"
+    }
+  ],
+  "package-specs": [
+    {
+      "module": "commonjs",
+      "in-source": true
+    }
+  ],
+  "suffix": ".bs.js",
+  "namespace": false,
+  "bs-dependencies": [
+    "reason-react"
+  ],
+  "warnings": {
+    "error": "+a"
+  },
+  "refmt": 3
+}
+

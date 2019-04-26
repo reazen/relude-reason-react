@@ -1,0 +1,17 @@
+# OCaml/Bucklescript/Reason
+.merlin
+.bsb.lock
+
+# Node
+npm-debug.log
+/node_modules/
+
+# Parcel
+/.cache
+
+# Mac
+.DS_Store
+
+# Project files
+/dist
+/lib/bs
