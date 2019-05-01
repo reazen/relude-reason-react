@@ -21,7 +21,7 @@
     "react": "^16.8.1",
     "react-dom": "^16.8.1",
     "reason-react": ">=0.7.0",
-    "relude": "github:reazen/relude#v0.3.0"
+    "relude": "~0.5.0"
   },
   "devDependencies": {
     "bs-fetch": "~0.3.1",
@@ -31,7 +31,7 @@
     "react": "^16.8.1",
     "react-dom": "^16.8.1",
     "reason-react": ">=0.7.0",
-    "relude": "github:reazen/relude#b1760c9",
-    "relude-fetch": "github:reazen/relude-fetch#692a58b"
+    "relude": "~0.5.0",
+    "relude-fetch": "github:reazen/relude-fetch#17e6197"
   }
 }
