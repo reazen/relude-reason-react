@@ -5,7 +5,7 @@ let make = () => {
   switch (url.path) {
   | [] => <AnimalListView />
 
-  //| ["animals", name] => <AnimalView name />
+  | ["create"] => <div>{React.string("Animal create view")}</div>
 
   | _ => <div> {React.string("Invalid URL")} </div>
   };

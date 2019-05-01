@@ -12,7 +12,7 @@ type action =
   | DeleteAnimal(Animal.t);
 
 let renderAnimalsLoading = () => {
-  <div> {React.string("Loading...")} </div>;
+  <div> {React.string("Loading animals...")} </div>;
 };
 
 let renderAnimalsTable = (_send: action => unit, animals: list(Animal.t)) =>
@@ -35,7 +35,7 @@ let renderAnimalsResult = (send, result) =>
 let make = () => {
   let (state, send) =
     ReludeReact.Reducer.useReducer(
-      {title: "My Animals", animalsResult: Relude.AsyncResult.init},
+      {title: "Animals", animalsResult: Relude.AsyncResult.init},
       (action, state) =>
       switch (action) {
       | FetchAnimals =>
@@ -50,19 +50,23 @@ let make = () => {
                e => FetchAnimalsError(e),
              ),
         )
+
       | FetchAnimalsSuccess(animals) =>
         Update({
           ...state,
           animalsResult: Relude.AsyncResult.completeOk(animals),
         })
+
       | FetchAnimalsError(error) =>
         Update({
           ...state,
           animalsResult: Relude.AsyncResult.completeError(error),
         })
 
-      | ViewCreateForm => NoUpdate
+      | ViewCreateForm => SideEffect(_ => ReasonReactRouter.push("/create"))
+
       | ViewAnimal(_animal) => NoUpdate
+
       | DeleteAnimal(_animal) => NoUpdate
       }
     );
@@ -70,7 +74,17 @@ let make = () => {
   ReludeReact.Effect.useOnMount(() => send(FetchAnimals));
 
   <div>
-    <h1> {React.string("Animals")} </h1>
+    <h1> {React.string(state.title)} </h1>
+    <div>
+      <a
+        href="#"
+        onClick={e => {
+          ReactEvent.Synthetic.preventDefault(e);
+          send(ViewCreateForm);
+        }}>
+        {React.string("Create")}
+      </a>
+    </div>
     {renderAnimalsResult(send, state.animalsResult)}
   </div>;
 };

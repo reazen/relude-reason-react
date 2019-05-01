@@ -8,5 +8,7 @@ let animalList: unit => list(Animal.t) =
     |> Relude.List.fromArray;
   };
 
+let artificalDelay = 2000;
+
 let fetchAnimals: Relude.IO.t(list(Animal.t), Error.t) =
-  Relude.IO.pure(animalList());
+  Relude.IO.pure(animalList()) |> Relude.IO.withDelay(artificalDelay);
