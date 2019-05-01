@@ -9,15 +9,17 @@ type t('action, 'state) = {
   unsafeRun: context('action, 'state) => option(canceller),
 };
 
+// Alias for SideEffect.t
 type sideEffect('action, 'state) = t('action, 'state);
 
 module Uncancellable = {
-  type t('action, 'state) = {run: context('action, 'state) => unit};
+  type t('action, 'state) = {unsafeRun: context('action, 'state) => unit};
 
+  // Lifts an uncancellable side effect to the more general sideEffect type
   let lift: t('action, 'state) => sideEffect('action, 'state) =
     uncancellable => {
       unsafeRun: context => {
-        uncancellable.run(context);
+        uncancellable.unsafeRun(context);
         None;
       },
     };
@@ -26,8 +28,13 @@ module Uncancellable = {
 };
 
 module Cancellable = {
-  type t('action, 'state) = {run: context('action, 'state) => canceller};
+  type t('action, 'state) = {
+    unsafeRun: context('action, 'state) => canceller,
+  };
 
+  // Lifts an cancellable side effect to the more general sideEffect type
   let lift: t('action, 'state) => sideEffect('action, 'state) =
-    cancellable => {unsafeRun: context => Some(cancellable.run(context))};
+    cancellable => {
+      unsafeRun: context => Some(cancellable.unsafeRun(context)),
+    };
 };
