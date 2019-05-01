@@ -26,6 +26,10 @@
     "reason-react",
     "relude"
   ],
+  "bs-dev-dependencies": [
+    "bs-fetch",
+    "relude-fetch"
+  ],
   "warnings": {
     "error": "+a"
   },

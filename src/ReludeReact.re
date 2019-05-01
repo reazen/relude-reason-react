@@ -1,3 +1,3 @@
-let title = "ReludeReact";
-
-module IO = ReludeReact_IO;
+module SideEffect = ReludeReact_SideEffect;
+module Reducer = ReludeReact_Reducer;
+module Effect = ReludeReact_Effect;
