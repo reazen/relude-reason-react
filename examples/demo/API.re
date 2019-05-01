@@ -4,7 +4,7 @@ let animalMutableMap: Belt.HashMap.String.t(Animal.t) =
 let animalList: unit => list(Animal.t) =
   () => {
     Belt.HashMap.String.toArray(animalMutableMap)
-    |> Relude.Array.map(tup => snd(tup))
+    |> Relude.Array.map(snd)
     |> Relude.List.fromArray;
   };
 

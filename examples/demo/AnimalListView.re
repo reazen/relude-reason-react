@@ -40,10 +40,12 @@ let make = () => {
       switch (action) {
       | FetchAnimals =>
         UpdateWithIO(
+          // Create the updated state
           {
             ...state,
             animalsResult: state.animalsResult |> Relude.AsyncResult.toBusy,
           },
+          // Create an IO.t('action, 'action) to run - the resulting actions (error or success) will be sent automatically
           API.fetchAnimals
           |> Relude.IO.bimap(
                a => FetchAnimalsSuccess(a),
