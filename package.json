@@ -3,13 +3,13 @@
   "description": "Relude-based utilities for ReasonReact",
   "version": "0.1.0",
   "scripts": {
-    "build": "bsb -make-world",
-    "watch": "bsb -make-world -w",
     "clean": "bsb -clean-world",
+    "build": "bsb -make-world",
     "cleanbuild": "npm run clean && npm run build",
-    "test": "npm run cleanbuild",
-    "cleantest": "npm run clean && npm run test",
-    "server:demo": "parcel examples/demo/index.html"
+    "test": "jest",
+    "cleantest": "npm run cleanbuild && npm run test",
+    "watch": "bsb -make-world -w",
+    "demo": "parcel examples/demo/index.html"
   },
   "keywords": [
     "BuckleScript",
@@ -20,20 +20,29 @@
   ],
   "license": "MIT",
   "peerDependencies": {
-    "react": "^16.8.1",
-    "react-dom": "^16.8.1",
-    "reason-react": ">=0.7.0",
-    "relude": "~0.7.0"
+    "bs-abstract": "~0.17.0",
+    "react": "~16.8.6",
+    "react-dom": "~16.8.6",
+    "reason-react": "~0.7.0",
+    "relude": "~0.18.0"
   },
   "devDependencies": {
-    "bs-fetch": "~0.3.1",
-    "bs-platform": "^5.0.3",
+    "@glennsl/bs-jest": "~0.4.8",
+    "bs-abstract": "~0.17.0",
+    "bs-fetch": "~0.5.0",
+    "bs-platform": "~5.0.6",
     "bsb-js": "~1.1.7",
     "parcel-bundler": "~1.12.3",
-    "react": "^16.8.1",
-    "react-dom": "^16.8.1",
-    "reason-react": ">=0.7.0",
-    "relude": "~0.7.0",
-    "relude-fetch": "github:reazen/relude-fetch#04fc60a"
+    "react": "~16.8.6",
+    "react-dom": "~16.8.6",
+    "reason-react": "~0.7.0",
+    "relude": "~0.18.0",
+    "relude-fetch": "~0.3.0"
+  },
+  "jest": {
+    "verbose": false,
+    "testPathIgnorePatterns": [
+      "/node_modules/"
+    ]
   }
 }

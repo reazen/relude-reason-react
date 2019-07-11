@@ -9,6 +9,11 @@
       "subdirs": true
     },
     {
+      "dir": "__tests__",
+      "subdirs": true,
+      "type": "dev"
+    },
+    {
       "dir": "examples",
       "subdirs": true,
       "type": "dev"
@@ -17,7 +22,7 @@
   "package-specs": [
     {
       "module": "commonjs",
-      "in-source": true
+      "in-source": false
     }
   ],
   "suffix": ".bs.js",
@@ -27,6 +32,7 @@
     "relude"
   ],
   "bs-dev-dependencies": [
+    "@glennsl/bs-jest",
     "bs-fetch",
     "relude-fetch"
   ],

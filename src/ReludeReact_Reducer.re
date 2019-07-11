@@ -10,15 +10,15 @@ module SideEffect = ReludeReact_SideEffect;
 type update('action, 'state) =
   | NoUpdate
   | Update('state)
-  | UpdateWithSideEffect('state, SideEffect.Uncancellable.t('action, 'state))
-  | SideEffect(SideEffect.Uncancellable.t('action, 'state))
-  | UpdateWithCancellableSideEffect(
+  | UpdateWithSideEffect('state, SideEffect.Uncancelable.t('action, 'state))
+  | SideEffect(SideEffect.Uncancelable.t('action, 'state))
+  | UpdateWithCancelableSideEffect(
       'state,
-      SideEffect.Cancellable.t('action, 'state),
+      SideEffect.Cancelable.t('action, 'state),
     )
-  | CancellableSideEffect(SideEffect.Cancellable.t('action, 'state))
-  | UpdateWithIO('state, SideEffect.Uncancellable.io('action, 'state))
-  | IO(SideEffect.Uncancellable.io('action, 'state));
+  | CancelableSideEffect(SideEffect.Cancelable.t('action, 'state))
+  | UpdateWithIO('state, SideEffect.Uncancelable.IO.t('action, 'state))
+  | IO(SideEffect.Uncancelable.IO.t('action, 'state));
 
 // A reducer function takes the action and current state and returns an update command
 type reducer('action, 'state) = ('action, 'state) => update('action, 'state);
@@ -48,40 +48,40 @@ let useReducer = (initialState: 'state, reducer: reducer('action, 'state)) => {
               ref(
                 Belt.Array.concat(
                   sideEffects^,
-                  [|SideEffect.Uncancellable.lift(sideEffect)|],
+                  [|SideEffect.Uncancelable.lift(sideEffect)|],
                 ),
               ),
           }
 
-        | UpdateWithCancellableSideEffect(state, cancellableSideEffect) => {
+        | UpdateWithCancelableSideEffect(state, cancelableSideEffect) => {
             state,
             sideEffects:
               ref(
                 Belt.Array.concat(
                   sideEffects^,
-                  [|SideEffect.Cancellable.lift(cancellableSideEffect)|],
+                  [|SideEffect.Cancelable.lift(cancelableSideEffect)|],
                 ),
               ),
           }
 
-        | SideEffect(uncancellableSideEffect) => {
+        | SideEffect(uncancelableSideEffect) => {
             ...stateAndSideEffects,
             sideEffects:
               ref(
                 Belt.Array.concat(
                   stateAndSideEffects.sideEffects^,
-                  [|SideEffect.Uncancellable.lift(uncancellableSideEffect)|],
+                  [|SideEffect.Uncancelable.lift(uncancelableSideEffect)|],
                 ),
               ),
           }
 
-        | CancellableSideEffect(cancellableSideEffect) => {
+        | CancelableSideEffect(cancelableSideEffect) => {
             ...stateAndSideEffects,
             sideEffects:
               ref(
                 Belt.Array.concat(
                   stateAndSideEffects.sideEffects^,
-                  [|SideEffect.Cancellable.lift(cancellableSideEffect)|],
+                  [|SideEffect.Cancelable.lift(cancelableSideEffect)|],
                 ),
               ),
           }
@@ -90,7 +90,7 @@ let useReducer = (initialState: 'state, reducer: reducer('action, 'state)) => {
           // The IO must have an 'action type for both the success and error channels - this
           // way we know that the errors have been properly handled and translated to the appropriate action.
           // Run the IO to get the success and error actions, then just send them.
-          // TODO: we don't have cancellable IOs (yet?)
+          // TODO: we don't have cancelable IOs (yet?)
           let sideEffect: SideEffect.t('action, 'state) = (
             context => {
               ioAction
@@ -142,21 +142,21 @@ let useReducer = (initialState: 'state, reducer: reducer('action, 'state)) => {
 
   // This registers the side effects that were emitted by the reducer in a react effect hook.
   // When the hook runs, it will execute all the side effects and will
-  // pass along any cancellation functions (bundled in a single cancellation function) to react itself.
+  // pass along any cancelation functions (bundled in a single cancelation function) to react itself.
   // Each time this runs, the side effects array is cleared.  Also, we pass along the side effects array
   // in the awesome array argument for react to monitor.
   React.useEffect1(
     () =>
       if (Array.length(sideEffects^) > 0) {
-        let cancellers: array(SideEffect.canceller) =
+        let cancelers: array(SideEffect.canceler) =
           Belt.Array.keepMap(sideEffects^, sideEffect =>
             sideEffect({state, send})
           );
 
         sideEffects := [||];
 
-        Array.length(cancellers) > 0
-          ? Some(() => cancellers->Belt.Array.forEach(func => func())) : None;
+        Array.length(cancelers) > 0
+          ? Some(() => cancelers->Belt.Array.forEach(func => func())) : None;
       } else {
         None;
       },
