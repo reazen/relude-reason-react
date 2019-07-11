@@ -18,7 +18,7 @@ you to change the state, whereas the `ReludeReact.useReducer` allows you to both
 
 To use the `ReludeReact.useReducer` hook, you must provide a reducer function of the following type:
 
-```reasonml
+```reason
 type reducer('action, 'state) = ('action, 'state) => update('action, 'state);
 ```
 
@@ -26,7 +26,7 @@ A function that accepts an `'action` and the current `'state`, and returns a val
 
 The `update` value is a variant with the following type:
 
-```reasonml
+```reason
 type update('action, 'state) =
   | NoUpdate
   | Update('state)
@@ -58,7 +58,7 @@ Update the component state to the given value, and perform the given side effect
 
 These types of side effects are useful for doing things like pushing a history state to navigate to a different URL, doing one-off DOM manipulations, or other types of things you don't want or need to manage or control.
 
-#### `SideEffect(...)`
+#### `SideEffect`
 
 Same as `UpdateWithSideEffect`, but with no state update.
 
@@ -109,7 +109,7 @@ See the demo app in `examples/demo`
 
 Below is a somewhat contrived/simple example fo what a `ReludeReact` component might look like.
 
-```reasonml
+```reason
 // AnimalListView.re
 
 // The state of your component.
