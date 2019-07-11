@@ -113,7 +113,27 @@ See [Relude IO documentation](https://reazen.github.io/relude/#/api/IO) for more
 
 ### `ReludeReact.Render` utilities
 
-TODO
+`ReludeReact.Render` contains a variety of useful functions for rendering different data types, to avoid extra boilerplate/noise in your components.  See the code for details.
+
+```reason
+ReludeReact.Render.ifTrue
+ReludeReact.Render.ifTrueLazy
+ReludeReact.Render.option
+ReludeReact.Render.optionLazy
+ReludeReact.Render.optionIfSome
+ReludeReact.Render.result
+ReludeReact.Render.resultIfOk
+ReludeReact.Render.resultIfError
+ReludeReact.Render.asyncData
+ReludeReact.Render.asyncDataLazy
+ReludeReact.Render.asyncDataByValue
+ReludeReact.Render.asyncDataLazyByValue
+ReludeReact.Render.asyncResult
+ReludeReact.Render.asyncResultLazy
+ReludeReact.Render.asyncResultByValue
+ReludeReact.Render.asyncResultLazyByValue
+// etc.
+```
 
 ## Examples
 
