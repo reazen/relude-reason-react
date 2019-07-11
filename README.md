@@ -9,14 +9,14 @@ Relude-based utilities for ReasonReact
 
 ## Documentation
 
-### `ReludeReact.useReducer`
+### `ReludeReact.Reducer.useReducer`
 
-The `ReludeReact.Reducer` was inspired by the original/pre-hooks [ReasonReact record API](https://reasonml.github.io/reason-react/docs/fr/jsx-2), and the hooks-based [reason-react-update](https://github.com/bloodyowl/reason-react-update) libray by [Matthias Le Brun (bloodyowl)](https://github.com/bloodyowl).
+The `ReludeReact.Reducer.useReducer` was inspired by the original/pre-hooks [ReasonReact record API](https://reasonml.github.io/reason-react/docs/fr/jsx-2), and the hooks-based [reason-react-update](https://github.com/bloodyowl/reason-react-update) libray by [Matthias Le Brun (bloodyowl)](https://github.com/bloodyowl).
 
-`ReludeReact.useReducer` is similar to the [React `useReducer` hook](https://reactjs.org/docs/hooks-reference.html#usereducer) with the key difference that the React `useReducer` only allows
-you to change the state, whereas the `ReludeReact.useReducer` allows you to both change the state, and to safely emit side effects or `Relude.IO`-based actions, which can result in the emission of further actions.
+`ReludeReact.Reducer.useReducer` is similar to the [React `useReducer` hook](https://reactjs.org/docs/hooks-reference.html#usereducer) with the key difference that the React `useReducer` only allows
+you to change the state, whereas the `ReludeReact.Reducer.useReducer` allows you to both change the state, and to safely emit side effects or `Relude.IO`-based actions, which can result in the emission of further actions.
 
-To use the `ReludeReact.useReducer` hook, you must provide a reducer function of the following type:
+To use the `ReludeReact.Reducer.useReducer` hook, you must provide a reducer function of the following type:
 
 ```reason
 type reducer('action, 'state) = ('action, 'state) => update('action, 'state);
@@ -107,7 +107,7 @@ mapping/flatMapping results and errors, catching and transforming errors, combin
 
 See [Relude IO documentation](https://reazen.github.io/relude/#/api/IO) for more information.
 
-### `ReludeReact.useOnMount`
+### `ReludeReact.Effect.useOnMount`
 
 `ReludeReact.useOnMount` is a simple shortcut which allows you to register a simple `unit => unit` function to run when a component is first mounted.  This is typically used to send an initial `'action` into your reducer for initializing the component (e.g. fetch any initial data).
 
@@ -123,7 +123,7 @@ See the demo app in `examples/demo`
 > npm run demo
 ```
 
-Below is a somewhat contrived/simple example fo what a `ReludeReact` component might look like.
+Below is a somewhat contrived/simple example of what a `ReludeReact` component might look like.
 
 ```reason
 // AnimalListView.re
