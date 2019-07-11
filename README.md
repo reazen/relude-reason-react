@@ -44,39 +44,55 @@ type update('action, 'state) =
 Basically, this means that in your `ReludeReact.useReducer` component, for any action that occurs,
 you can respond to the action by doing any of the following things:
 
-#### `NoUpdate`
+```reason
+NoUpdate
+```
 
 Don't change the state, and don't perform an side effects or IO-based effects
 
-#### `Update('state)`
+```reason
+Update(state)
+```
 
 Update the component state to the given value, but don't perform any side effects or IO-based effects.
 
-#### `UpdateWithSideEffect('state, SideEffect.Uncancelable.t('action, 'state))`
+```reason
+UpdateWithSideEffect(state, sideEffect)
+```
 
 Update the component state to the given value, and perform the given side effect (basically a function that is given `state` and `send` and is allowed to perform any type of sync or async side effect, and emit additional actions via `send`, and ultimately return unit `()`.  In this case, the side effect is Uncancelable, which means, there is no way to cancel it later.
 
 These types of side effects are useful for doing things like pushing a history state to navigate to a different URL, doing one-off DOM manipulations, or other types of things you don't want or need to manage or control.
 
-#### `SideEffect`
+```reason
+SideEffect(sideEffect)
+```
 
 Same as `UpdateWithSideEffect`, but with no state update.
 
-#### `UpdateWithCancelableSideEffect`
+```reason
+UpdateWithCancelableSideEffect(state, sideEffect)
+```
 
 Same as `UpdateWithSideEffect`, but the side effect can be cancelled via a returned canceler function.
 
-#### `CancelableSideEffect`
+```reason
+CancelableSideEffect(sideEffect)
+```
 
 Same as `UpdateWithCancelableSideEffect`, but with no state update.
 
-#### `UpdateWithIO`
+```reason
+UpdateWithIO(state, ioOfActionAction)
+```
 
 Similar to `UpdateWithSideEffect`, but instead of a function that accepts the side effect context and returns `()`, you return a `Relude.IO.t('action, 'action)`.  An `IO` is a data type which can perform any type of synchronous or asynchronous side effect - see below.  `Relude.IO` is a bi-functior which has a typed error channel, and a typed "success" channel.  In this case the success and error channels are both constrained to the type `'action`, which means that your `IO`, when executed, must produce an `'action` to dispatch on either success or failure.
 
 A common pattern with component actions is to perform some async action (which typically can fail, e.g. an AJAX/fetch call), and then send a new `'action` when the async invocation either succeeds or fails.  This patterns is exactly what's captured by the `Relude.IO.t('action, 'action)` type.  See below for a more illustrative example.
 
-#### `IO`
+```reason
+IO(ioOfActionAction)
+```
 
 Similar to `UpdateWithIO`, but with no initial state update.
 
