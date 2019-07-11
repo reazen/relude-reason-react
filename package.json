@@ -1,7 +1,7 @@
 {
   "name": "relude-reason-react",
   "description": "Relude-based utilities for ReasonReact",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "scripts": {
     "clean": "bsb -clean-world",
     "build": "bsb -make-world",
