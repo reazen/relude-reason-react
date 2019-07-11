@@ -132,7 +132,7 @@ ReludeReact.Render.asyncResult
 ReludeReact.Render.asyncResultLazy
 ReludeReact.Render.asyncResultByValue
 ReludeReact.Render.asyncResultLazyByValue
-// etc.
+// And many more!
 ```
 
 ## Examples
@@ -148,15 +148,21 @@ Below is a somewhat contrived/simple example of what a `ReludeReact` component m
 ```reason
 // AnimalListView.re
 
-// The state of your component.
-// Relude.AsyncResult is a type similar to Elm's RemoteData - a variant which
-// allows you to represent data in various states of loading (init/loading/loaded/reloading/failed).
+module AsyncResult = Relude.AsyncResult;
+module IO = Relude.IO;
+module List = Relude.List;
+
+// The state of this component
+// We're using a Relude.AsyncResult to represent the state of animals, which are loaded asynchronously and can fail.
 type state = {
   title: string,
-  animalsResult: Relude.AsyncResult.t(list(Animal.t), Error.t),
+  animalsResult: AsyncResult.t(list(Animal.t), Error.t),
 };
 
-// The actions which the component emits and handles via the ReludeReact.useReducer hook
+// The initial state for the component (used in the reducer initialization below)
+let initialState = {title: "Animals", animalsResult: AsyncResult.init};
+
+// The actions that our component emits and handles in the reducer
 type action =
   | FetchAnimals
   | FetchAnimalsSuccess(list(Animal.t))
@@ -165,107 +171,102 @@ type action =
   | ViewAnimal(Animal.t)
   | DeleteAnimal(Animal.t);
 
-// Render functions for various parts of the component
-// Note: these could also be nested components here.
+// The reducer function which accepts and action and the current state, and emits
+// an "update" which can do things like updating the state, running raw or IO-based effects
+let reducer =
+    (action: action, state: state): ReludeReact.Reducer.update(action, state) =>
+  switch (action) {
+  | FetchAnimals =>
+    UpdateWithIO(
+      {...state, animalsResult: state.animalsResult |> AsyncResult.toBusy},
+      API.fetchAnimals
+      |> IO.bimap(a => FetchAnimalsSuccess(a), e => FetchAnimalsError(e)),
+    )
 
-let renderAnimalsLoading = () => {
-  <div> {React.string("Loading animals...")} </div>;
+  | FetchAnimalsSuccess(animals) =>
+    Update({...state, animalsResult: AsyncResult.completeOk(animals)})
+
+  | FetchAnimalsError(error) =>
+    Update({...state, animalsResult: AsyncResult.completeError(error)})
+
+  | ViewCreateForm => SideEffect(_ => ReasonReactRouter.push("/create"))
+
+  | ViewAnimal(_animal) => NoUpdate
+
+  | DeleteAnimal(_animal) => NoUpdate
+  };
+
+// Various inline components
+
+module AnimalsLoading = {
+  [@react.component]
+  let make = () => {
+    <div> {React.string("Loading animals...")} </div>;
+  };
 };
 
-let renderAnimalsTable = (_send: action => unit, animals: list(Animal.t)) =>
-  <div>
-    {React.string("Animals: " ++ string_of_int(Relude.List.length(animals)))}
-  </div>;
+module AnimalsTable = {
+  [@react.component]
+  let make = (~animals: list(Animal.t), ~send: action => unit) => {
+    let _ = send; // TODO
+    <div>
+      {React.string("Animals: " ++ string_of_int(List.length(animals)))}
+    </div>;
+  };
+};
 
-let renderAnimalsError = (error: Error.t) =>
-  <div> {React.string(Error.show(error))} </div>;
+module AnimalsError = {
+  [@react.component]
+  let make = (~error: Error.t) =>
+    <div> {React.string(Error.show(error))} </div>;
+};
 
-let renderAnimalsResult = (send, result) =>
-  result
-  |> Relude.AsyncResult.foldByValueLazy(
-       renderAnimalsLoading,
-       renderAnimalsTable(send),
-       renderAnimalsError,
-     );
+module AnimalsResult = {
+  [@react.component]
+  let make = (~result: AsyncResult.t(list(Animal.t), Error.t), ~send) =>
+    result
+    |> ReludeReact.Render.asyncResultByValueLazy(
+         _ => <AnimalsLoading />,
+         animals => <AnimalsTable animals send />,
+         error => <AnimalsError error />,
+       );
+};
 
-// This is our main component
+// The main view - accepts the state and send values we get from the reducer
+
+module Main = {
+  [@react.component]
+  let make = (~state, ~send) => {
+    <div>
+      <h1> {React.string(state.title)} </h1>
+      <div>
+        <a
+          href="#"
+          onClick={e => {
+            ReactEvent.Synthetic.preventDefault(e);
+            send(ViewCreateForm);
+          }}>
+          {React.string("Create")}
+        </a>
+      </div>
+      <AnimalsResult send result={state.animalsResult} />
+    </div>;
+  };
+};
+
+// The main component definition
+// Here, we invoke our hooks and render the main view
+
 [@react.component]
 let make = () => {
-  let (state, send) =
+  // Initialize the ReludeReact reducer
+  let (state, send) = ReludeReact.Reducer.useReducer(initialState, reducer);
 
-    // Initialize the ReludeReact.Reducer hook
-    // We provide the initial state, and a function `(action, send) => update`
-    // Note: this reducer function can be defined above/outside this function -
-    // it just needs to be passed the `state` and `send` arguments (if needed).
-    ReludeReact.Reducer.useReducer(
-      // initial state (can also be defined outside this function)
-      {title: "Animals", animalsResult: Relude.AsyncResult.init},
-
-      // the reducer function - takes an action and the current state, and returns
-      // an `update` value, which is then processed for side effects.
-      (action, state) =>
-      switch (action) {
-      | FetchAnimals =>
-        UpdateWithIO(
-          // New state to apply now
-          {
-            ...state,
-            animalsResult: state.animalsResult |> Relude.AsyncResult.toBusy,
-          },
-          // Create an IO.t('action, 'action) to run - the resulting actions (error or success) will be sent automatically
-          // Here we are making an async API call (which returns an IO), and then emitting a Success
-          // or Error action with the API result.
-          API.fetchAnimals
-          |> Relude.IO.bimap(
-               a => FetchAnimalsSuccess(a),
-               e => FetchAnimalsError(e),
-             ),
-        )
-
-      | FetchAnimalsSuccess(animals) =>
-        // Basic state update
-        Update({
-          ...state,
-          animalsResult: Relude.AsyncResult.completeOk(animals),
-        })
-
-      | FetchAnimalsError(error) =>
-        // Basic state update
-        Update({
-          ...state,
-          animalsResult: Relude.AsyncResult.completeError(error),
-        })
-
-      // This is a navigation action, so we simply perform an unmanaged side effect
-      // which takes us to a new page (component) via a router managing this component.
-      | ViewCreateForm => SideEffect(_ => ReasonReactRouter.push("/create"))
-
-      // TODO: NoUpdate for now
-      | ViewAnimal(_animal) => NoUpdate
-
-      // TODO: NoUpdate for now
-      | DeleteAnimal(_animal) => NoUpdate
-      }
-    );
-
-  // Use the onMount convenience hook as a way to initialize the component via an async action.
+  // Trigger an initialization action on mount
   ReludeReact.Effect.useOnMount(() => send(FetchAnimals));
 
-  // Here is our main view
-  <div>
-    <h1> {React.string(state.title)} </h1>
-    <div>
-      <a
-        href="#"
-        onClick={e => {
-          ReactEvent.Synthetic.preventDefault(e);
-          send(ViewCreateForm);
-        }}>
-        {React.string("Create")}
-      </a>
-    </div>
-    {renderAnimalsResult(send, state.animalsResult)}
-  </div>;
+  // Render our main view, passing the state and dispatcher function down
+  <Main state send />;
 };
 ```
 
