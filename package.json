@@ -18,26 +18,29 @@
     "React",
     "ReasonReact"
   ],
+  "homepage": "https://github.com/reazen/relude-reason-react",
+  "repository": "https://github.com/reazen/relude-reason-react",
+  "bugs": "https://github.com/reazen/relude-reason-react/issues",
   "license": "MIT",
   "peerDependencies": {
     "bs-abstract": "~0.17.0",
-    "react": "~16.8.6",
-    "react-dom": "~16.8.6",
+    "react": "~16.9.0",
+    "react-dom": "~16.9.0",
     "reason-react": "~0.7.0",
-    "relude": "~0.18.0"
+    "relude": "~0.25.1"
   },
   "devDependencies": {
-    "@glennsl/bs-jest": "~0.4.8",
+    "@glennsl/bs-jest": "~0.4.9",
     "bs-abstract": "~0.17.0",
     "bs-fetch": "~0.5.0",
     "bs-platform": "~5.0.6",
     "bsb-js": "~1.1.7",
     "parcel-bundler": "~1.12.3",
-    "react": "~16.8.6",
-    "react-dom": "~16.8.6",
+    "react": "~16.9.0",
+    "react-dom": "~16.9.0",
     "reason-react": "~0.7.0",
-    "relude": "~0.18.0",
-    "relude-fetch": "~0.3.0"
+    "relude": "~0.25.1",
+    "relude-fetch": "~0.4.0"
   },
   "jest": {
     "verbose": false,
