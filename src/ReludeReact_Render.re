@@ -16,6 +16,28 @@ let ifTrueLazy: (unit => React.element, bool) => React.element =
     };
 
 /**
+Returns an element if the condition is false, otherwise React.null
+*/
+let ifFalse: (React.element, bool) => React.element =
+  (element, condition) =>
+    if (!condition) {
+      element;
+    } else {
+      React.null;
+    };
+
+/**
+Renders an element if the condition is false, otherwise React.null
+*/
+let ifFalseLazy: (unit => React.element, bool) => React.element =
+  (element, condition) =>
+    if (!condition) {
+      element();
+    } else {
+      React.null;
+    };
+
+/**
 Renders an option with a None element or render fucntion for Some
  */
 let option:
@@ -490,7 +512,7 @@ let asyncResultIfIdle:
   'a 'e.
   (
     option(Belt.Result.t('a, 'e)) => React.element,
-    Relude.AsyncResult.t('a, 'e),
+    Relude.AsyncResult.t('a, 'e)
   ) =>
   React.element
  =
