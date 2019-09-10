@@ -9,7 +9,7 @@ Relude-based utilities for ReasonReact
 
 # Documentation
 
-## `ReludeReact.Reducer`
+## `ReludeReact.Reducer.useReducer` hook
 
 The `ReludeReact.Reducer.useReducer` hook was inspired by the original/pre-hooks [ReasonReact record API](https://reasonml.github.io/reason-react/docs/fr/jsx-2), and the hooks-based [reason-react-update](https://github.com/bloodyowl/reason-react-update) libray by [Matthias Le Brun (bloodyowl)](https://github.com/bloodyowl).
 
@@ -52,21 +52,21 @@ Don't change the state, and don't perform an side effects or IO-based effects.  
 
 Update the component state to the given value, but don't perform any side effects or IO-based effects.
 
-### `UpdateWithSideEffect(state, sideEffect)`
+### `UpdateWithSideEffect(state, {state, send} => unit)`
 
-Update the component state to the given value, and perform the given side effect (basically a function that is given `state` and `send` and is allowed to perform any type of sync or async side effect, and emit additional actions via `send`, and ultimately return unit `()`.  In this case, the side effect is Uncancelable, which means, there is no way to cancel it later.
+Update the component state to the given value, and perform the given side effect (basically a function that is given a context record of `state` and `send` and is allowed to perform any type of sync or async side effect, and emit additional actions via `send`, which is a function of type  `action => unit`, and ultimately return unit `()`.  In this case, the side effect is Uncancelable, which means, there is no way to cancel it later.
 
 These types of side effects are useful for doing things like pushing a history state to navigate to a different URL, doing one-off DOM manipulations, or other types of things you don't want or need to manage or control.
 
-### `SideEffect(sideEffect)`
+### `SideEffect({state, send} => unit)`
 
 Same as `UpdateWithSideEffect`, but with no state update.
 
-### `UpdateWithCancelableSideEffect(state, sideEffect)`
+### `UpdateWithCancelableSideEffect(state, {state, send} => (unit => unit))`
 
 Same as `UpdateWithSideEffect`, but the side effect can be cancelled via a returned canceler function.
 
-### `CancelableSideEffect(sideEffect)`
+### `CancelableSideEffect({state, send} => (unit, unit))`
 
 Same as `UpdateWithCancelableSideEffect`, but with no state update.
 
@@ -91,11 +91,11 @@ mapping/flatMapping results and errors, catching and transforming errors, combin
 
 See [Relude IO documentation](https://reazen.github.io/relude/#/api/IO) for more information.
 
-## `ReludeReact.Effect.useOnMount`
+## `ReludeReact.Effect.useOnMount` hook
 
 `ReludeReact.useOnMount` is a simple shortcut which allows you to register a simple `unit => unit` function to run when a component is first mounted.  This is typically used to send an initial `'action` into your reducer for initializing the component (e.g. fetch any initial data).
 
-## `ReludeReact.Effect.useIOOnMount`
+## `ReludeReact.Effect.useIOOnMount` hook
 
 `ReludeReact.Effect.useIOOnMount` (and it's variations) allows you to trigger a `Relude.IO`-based action when the component is mounted, and handle the final resulting value (either success or failure) using a side-effect callback.
 
