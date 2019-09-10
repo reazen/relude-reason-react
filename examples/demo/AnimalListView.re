@@ -19,7 +19,8 @@ type action =
   | FetchAnimalsError(Error.t)
   | ViewCreateForm
   | ViewAnimal(Animal.t)
-  | DeleteAnimal(Animal.t);
+  | DeleteAnimal(Animal.t)
+  | NoOp;
 
 // The reducer function which accepts and action and the current state, and emits
 // an "update" which can do things like updating the state, running raw or IO-based effects
@@ -44,6 +45,8 @@ let reducer =
   | ViewAnimal(_animal) => NoUpdate
 
   | DeleteAnimal(_animal) => NoUpdate
+
+  | NoOp => NoUpdate
   };
 
 // Various inline components
@@ -90,14 +93,21 @@ module Main = {
     <div>
       <h1> {React.string(state.title)} </h1>
       <div>
-        <a
-          href="#"
+        <button
           onClick={e => {
             ReactEvent.Synthetic.preventDefault(e);
             send(ViewCreateForm);
           }}>
           {React.string("Create")}
-        </a>
+        </button>
+        <button
+          href="#"
+          onClick={e => {
+            ReactEvent.Synthetic.preventDefault(e);
+            send(NoOp);
+          }}>
+          {React.string("No-Op Action")}
+        </button>
       </div>
       <AnimalsResult send result={state.animalsResult} />
     </div>;
@@ -113,7 +123,20 @@ let make = () => {
   let (state, send) = ReludeReact.Reducer.useReducer(initialState, reducer);
 
   // Trigger an initialization action on mount
+  // This is just using the send function from our reducer to send an action, which is handled by the reducer
   ReludeReact.Effect.useOnMount(() => send(FetchAnimals));
+
+  // This is just demonstrating triggering an IO action on mount, and handling the result via side-effecting functions
+  // In reality, the IO would probably be making a fetch request, or doing some other async action and then storing or
+  // dispatching the results.
+  ReludeReact.Effect.useIOOnMount(
+    IO.suspend(() => {
+      Js.log("Suspend 42");
+      42;
+    }),
+    intValue => Js.log("Got suspended value: " ++ string_of_int(intValue)),
+    _error => Js.log("Suspend 42 failed"),
+  );
 
   // Render our main view, passing the state and dispatcher function down
   <Main state send />;
