@@ -91,11 +91,13 @@ mapping/flatMapping results and errors, catching and transforming errors, combin
 
 See [Relude IO documentation](https://reazen.github.io/relude/#/api/IO) for more information.
 
-## `ReludeReact.Effect.useOnMount` hook
+## `ReludeReact.Effect` hooks
+
+### `useOnMount`
 
 `ReludeReact.useOnMount` is a simple shortcut which allows you to register a simple `unit => unit` function to run when a component is first mounted.  This is typically used to send an initial `'action` into your reducer for initializing the component (e.g. fetch any initial data).
 
-## `ReludeReact.Effect.useIOOnMount` hook
+### `useIOOnMount` hook
 
 `ReludeReact.Effect.useIOOnMount` (and it's variations) allows you to trigger a `Relude.IO`-based action when the component is mounted, and handle the final resulting value (either success or failure) using a side-effect callback.
 
@@ -103,6 +105,12 @@ This could be useful if you need to dispatch a fetch request on mount, and then 
 in localStorage, etc.
 
 Variations of this function exist which allow different types of result callbacks - i.e. a callback from `Belt.Result.t('a, 'e) => unit`, separate `'a => unit` and `'e => unit` callbacks, etc.
+
+### `useEffect1WithEq`...`useEffect5WithEq`
+
+These effect hooks are very similar to their `React.useEffectN` counterparts, except that you provide your own equality function along with any values the hook depends upon for re-running.
+
+React's `useEffect` dependencies are simply checked by `(===)`, which is fast but may lead to false positives when deciding if a hook dependencies have changed (particularly with complex types like records and lists). In cases where running an effect may be expensive, `useEffectNWithEq` allows much more control over whether that effect should run.
 
 ## `ReludeReact.Render` utilities
 

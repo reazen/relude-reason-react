@@ -1,6 +1,4 @@
-module AsyncResult = Relude.AsyncResult;
-module IO = Relude.IO;
-module List = Relude.List;
+open Relude.Globals;
 
 // The state of this component
 // We're using a Relude.AsyncResult to represent the state of animals, which are loaded asynchronously and can fail.
@@ -123,12 +121,14 @@ let make = () => {
   let (state, send) = ReludeReact.Reducer.useReducer(initialState, reducer);
 
   // Trigger an initialization action on mount
-  // This is just using the send function from our reducer to send an action, which is handled by the reducer
+  // This is just using the send function from our reducer to send an action,
+  // which is handled by the reducer
   ReludeReact.Effect.useOnMount(() => send(FetchAnimals));
 
-  // This is just demonstrating triggering an IO action on mount, and handling the result via side-effecting functions
-  // In reality, the IO would probably be making a fetch request, or doing some other async action and then storing or
-  // dispatching the results.
+  // This is just demonstrating triggering an IO action on mount, and handling
+  // the result via side-effecting functions
+  // In reality, the IO would probably be making a fetch request, or doing some
+  // other async action and then storing or dispatching the results.
   ReludeReact.Effect.useIOOnMount(
     IO.suspend(() => {
       Js.log("Suspend 42");
@@ -136,6 +136,15 @@ let make = () => {
     }),
     intValue => Js.log("Got suspended value: " ++ string_of_int(intValue)),
     _error => Js.log("Suspend 42 failed"),
+  );
+
+  // This just demonstrates that with our special effect hooks, you can provide
+  // a custom EQ function that will prevent a hook from running even if React's
+  // basic (===) check thinks the value has changed
+  ReludeReact.Effect.useEffect1WithEq(
+    () => Js.log("Running effect because some array has changed!"),
+    (a, b) => List.String.(eq(sort(a), sort(b))),
+    List.shuffle(["a", "b", "c", "d"]),
   );
 
   // Render our main view, passing the state and dispatcher function down
