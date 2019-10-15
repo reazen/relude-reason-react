@@ -23,7 +23,7 @@ type action =
 // The reducer function which accepts and action and the current state, and emits
 // an "update" which can do things like updating the state, running raw or IO-based effects
 let reducer =
-    (action: action, state: state): ReludeReact.Reducer.update(action, state) =>
+    (state: state, action: action): ReludeReact.Reducer.update(action, state) =>
   switch (action) {
   | FetchAnimals =>
     UpdateWithIO(
@@ -118,7 +118,7 @@ module Main = {
 [@react.component]
 let make = () => {
   // Initialize the ReludeReact reducer
-  let (state, send) = ReludeReact.Reducer.useReducer(initialState, reducer);
+  let (state, send) = ReludeReact.Reducer.useReducer(reducer, initialState);
 
   // Trigger an initialization action on mount
   // This is just using the send function from our reducer to send an action,
