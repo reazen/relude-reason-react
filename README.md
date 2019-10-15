@@ -19,10 +19,10 @@ you to change the state, whereas the `ReludeReact.Reducer.useReducer` allows you
 To use the `ReludeReact.Reducer.useReducer` hook, you must provide a reducer function of the following type:
 
 ```reason
-type reducer('action, 'state) = ('action, 'state) => update('action, 'state);
+type reducer('action, 'state) = ('state, 'action) => update('action, 'state);
 ```
 
-A function that accepts an `'action` and the current `'state`, and returns a value of type `update('action, 'state)`
+A function that accepts the current `'state` and an `'action`, and returns a value of type `update('action, 'state)`
 
 The `update` value is a variant with the following type:
 

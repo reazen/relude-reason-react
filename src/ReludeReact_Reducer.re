@@ -20,8 +20,8 @@ type update('action, 'state) =
   | UpdateWithIO('state, SideEffect.Uncancelable.IO.t('action, 'state))
   | IO(SideEffect.Uncancelable.IO.t('action, 'state));
 
-// A reducer function takes the action and current state and returns an update command
-type reducer('action, 'state) = ('action, 'state) => update('action, 'state);
+// A reducer function takes the current state and an action and returns an update command
+type reducer('action, 'state) = ('state, 'action) => update('action, 'state);
 
 // The react useReducer state stores the actual component state, along with a ref array of
 // side effects.  The side effects are collected in the reducer functions, then handled
@@ -31,11 +31,11 @@ type stateAndSideEffects('action, 'state) = {
   sideEffects: ref(array(SideEffect.t('action, 'state))),
 };
 
-let useReducer = (initialState: 'state, reducer: reducer('action, 'state)) => {
+let useReducer = (reducer: reducer('action, 'state), initialState: 'state) => {
   let ({state, sideEffects}, send) =
     React.useReducer(
       ({state, sideEffects} as stateAndSideEffects, action) => {
-        let update = reducer(action, state);
+        let update = reducer(state, action);
 
         switch (update) {
         | NoUpdate => stateAndSideEffects
