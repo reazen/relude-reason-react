@@ -20,6 +20,23 @@ type update('action, 'state) =
   | UpdateWithIO('state, SideEffect.Uncancelable.IO.t('action, 'state))
   | IO(SideEffect.Uncancelable.IO.t('action, 'state));
 
+// constructors as functions to make piping easier
+let update = state => Update(state);
+
+let updateWithSideEffect = (state, effect) =>
+  UpdateWithSideEffect(state, effect);
+
+let sideEffect = effect => SideEffect(effect);
+
+let updateWithCancelableSideEffect = (state, effect) =>
+  UpdateWithCancelableSideEffect(state, effect);
+
+let cancelableSideEffect = effect => CancelableSideEffect(effect);
+
+let updateWithIO = (state, io) => UpdateWithIO(state, io);
+
+let io = io => IO(io);
+
 // A reducer function takes the current state and an action and returns an update command
 type reducer('action, 'state) = ('state, 'action) => update('action, 'state);
 
