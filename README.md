@@ -46,7 +46,7 @@ you can respond to the action by doing any of the following things:
 
 ### `NoUpdate`
 
-Don't change the state, and don't perform an side effects or IO-based effects.  Basically a no-op - useful as a placeholder or to stub out actions prior to providing the implementations.
+Don't change the state, and don't perform an side effects or IO-based effects. Basically a no-op - useful as a placeholder or to stub out actions prior to providing the implementations.
 
 ### `Update(state)`
 
@@ -54,7 +54,7 @@ Update the component state to the given value, but don't perform any side effect
 
 ### `UpdateWithSideEffect(state, {state, send} => unit)`
 
-Update the component state to the given value, and perform the given side effect (basically a function that is given a context record of `state` and `send` and is allowed to perform any type of sync or async side effect, and emit additional actions via `send`, which is a function of type  `action => unit`, and ultimately return unit `()`.  In this case, the side effect is Uncancelable, which means, there is no way to cancel it later.
+Update the component state to the given value, and perform the given side effect (basically a function that is given a context record of `state` and `send` and is allowed to perform any type of sync or async side effect, and emit additional actions via `send`, which is a function of type `action => unit`, and ultimately return unit `()`. In this case, the side effect is Uncancelable, which means, there is no way to cancel it later.
 
 These types of side effects are useful for doing things like pushing a history state to navigate to a different URL, doing one-off DOM manipulations, or other types of things you don't want or need to manage or control.
 
@@ -72,9 +72,9 @@ Same as `UpdateWithCancelableSideEffect`, but with no state update.
 
 ### `UpdateWithIO(state, Relude.IO.t(action, action))`
 
-Similar to `UpdateWithSideEffect`, but instead of a function that accepts the side effect context and returns `()`, you return a `Relude.IO.t('action, 'action)`.  An `IO` is a data type which can perform any type of synchronous or asynchronous side effect - see below.  `Relude.IO` is a bi-functior which has a typed error channel, and a typed "success" channel.  In this case the success and error channels are both constrained to the type `'action`, which means that your `IO`, when executed, must produce an `'action` to dispatch on either success or failure.
+Similar to `UpdateWithSideEffect`, but instead of a function that accepts the side effect context and returns `()`, you return a `Relude.IO.t('action, 'action)`. An `IO` is a data type which can perform any type of synchronous or asynchronous side effect - see below. `Relude.IO` is a bi-functor which has a typed error channel, and a typed "success" channel. In this case the success and error channels are both constrained to the type `'action`, which means that your `IO`, when executed, must produce an `'action` to dispatch on either success or failure.
 
-A common pattern with component actions is to perform some async action (which typically can fail, e.g. an AJAX/fetch call), and then send a new `'action` when the async invocation either succeeds or fails.  This patterns is exactly what's captured by the `Relude.IO.t('action, 'action)` type.  See below for a more illustrative example.
+A common pattern with component actions is to perform some async action (which typically can fail, e.g. an AJAX/fetch call), and then send a new `'action` when the async invocation either succeeds or fails. This patterns is exactly what's captured by the `Relude.IO.t('action, 'action)` type. See below for a more illustrative example.
 
 ### `IO(Relude.IO.t(action, action))`
 
@@ -95,7 +95,7 @@ See [Relude IO documentation](https://reazen.github.io/relude/#/api/IO) for more
 
 ### `useOnMount`
 
-`ReludeReact.useOnMount` is a simple shortcut which allows you to register a simple `unit => unit` function to run when a component is first mounted.  This is typically used to send an initial `'action` into your reducer for initializing the component (e.g. fetch any initial data).
+`ReludeReact.useOnMount` is a simple shortcut which allows you to register a simple `unit => unit` function to run when a component is first mounted. This is typically used to send an initial `'action` into your reducer for initializing the component (e.g. fetch any initial data).
 
 ### `useIOOnMount` hook
 
@@ -114,7 +114,7 @@ React's `useEffect` dependencies are simply checked by `(===)`, which is fast bu
 
 ## `ReludeReact.Render` utilities
 
-`ReludeReact.Render` contains a variety of useful functions for rendering different data types, to avoid extra boilerplate/noise in your components.  The purpose of these functions is to try to streamline conditional rendering, so you don't have to write lots of `_ => React.null` cases when rendering conditional values, variants like `Relude.AsyncResult.t('a, 'e)`, etc.
+`ReludeReact.Render` contains a variety of useful functions for rendering different data types, to avoid extra boilerplate/noise in your components. The purpose of these functions is to try to streamline conditional rendering, so you don't have to write lots of `_ => React.null` cases when rendering conditional values, variants like `Relude.AsyncResult.t('a, 'e)`, etc.
 
 ```reason
 ReludeReact.Render.ifTrue
