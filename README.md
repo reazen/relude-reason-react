@@ -19,7 +19,7 @@ you to change the state, whereas the `ReludeReact.Reducer.useReducer` allows you
 To use the `ReludeReact.Reducer.useReducer` hook, you must provide a reducer function of the following type:
 
 ```reason
-type reducer('action, 'state) = ('state, 'action) => update('action, 'state);
+type reducer('state, 'action) = ('state, 'action) => update('action, 'state);
 ```
 
 A function that accepts the current `'state` and an `'action`, and returns a value of type `update('action, 'state)`
@@ -272,7 +272,7 @@ module Main = {
 [@react.component]
 let make = () => {
   // Initialize the ReludeReact reducer
-  let (state, send) = ReludeReact.Reducer.useReducer(initialState, reducer);
+  let (state, send) = ReludeReact.Reducer.useReducer(reducer, initialState);
 
   // Trigger an initialization action on mount
   // This is just using the send function from our reducer to send an action, which is handled by the reducer

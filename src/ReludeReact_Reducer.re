@@ -38,7 +38,7 @@ let updateWithIO = (state, io) => UpdateWithIO(state, io);
 let io = io => IO(io);
 
 // A reducer function takes the current state and an action and returns an update command
-type reducer('action, 'state) = ('state, 'action) => update('action, 'state);
+type reducer('state, 'action) = ('state, 'action) => update('action, 'state);
 
 // The react useReducer state stores the actual component state, along with a ref array of
 // side effects.  The side effects are collected in the reducer functions, then handled
@@ -48,7 +48,7 @@ type stateAndSideEffects('action, 'state) = {
   sideEffects: ref(array(SideEffect.t('action, 'state))),
 };
 
-let useReducer = (reducer: reducer('action, 'state), initialState: 'state) => {
+let useReducer = (reducer: reducer('state, 'action), initialState: 'state) => {
   let ({state, sideEffects}, send) =
     React.useReducer(
       ({state, sideEffects} as stateAndSideEffects, action) => {
