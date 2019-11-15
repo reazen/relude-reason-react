@@ -9,7 +9,8 @@
     "test": "jest",
     "cleantest": "npm run cleanbuild && npm run test",
     "watch": "bsb -make-world -w",
-    "demo": "parcel examples/demo/index.html"
+    "demo": "parcel examples/demo/index.html",
+    "sandbox": "parcel examples/sandbox/index.html"
   },
   "keywords": [
     "BuckleScript",
