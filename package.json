@@ -5,10 +5,12 @@
   "scripts": {
     "clean": "bsb -clean-world",
     "build": "bsb -make-world",
-    "cleanbuild": "npm run clean && npm run build",
-    "test": "jest",
-    "cleantest": "npm run cleanbuild && npm run test",
     "watch": "bsb -make-world -w",
+    "test": "jest",
+    "coverage": "jest --coverage --coverage-reporters=lcov --coverage-reporters=text --coverage-directory ./docs/coverage",
+    "cleanbuild": "npm run clean && npm run build",
+    "cleantest": "npm run cleanbuild && npm run test",
+    "cleancoverage": "npm run cleanbuild && npm run coverage",
     "demo": "parcel examples/demo/index.html",
     "sandbox": "parcel examples/sandbox/index.html"
   },
@@ -24,19 +26,19 @@
   "bugs": "https://github.com/reazen/relude-reason-react/issues",
   "license": "MIT",
   "peerDependencies": {
-    "bs-abstract": "~0.17.0",
+    "bs-abstract": "~0.18.0",
     "reason-react": "~0.7.0",
-    "relude": "~0.29.0"
+    "relude": "~0.41.0"
   },
   "devDependencies": {
     "@glennsl/bs-jest": "~0.4.9",
-    "bs-abstract": "~0.17.0",
+    "bs-abstract": "~0.18.0",
     "bs-fetch": "~0.5.0",
-    "bs-platform": "~5.0.6",
+    "bs-platform": "~7.0.1",
     "bsb-js": "~1.1.7",
     "parcel-bundler": "~1.12.4",
     "reason-react": "~0.7.0",
-    "relude": "~0.29.0",
+    "relude": "~0.41.0",
     "relude-fetch": "~0.6.0"
   },
   "jest": {

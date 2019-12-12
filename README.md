@@ -1,6 +1,6 @@
 # relude-reason-react
 
-[![CircleCI](https://img.shields.io/circleci/project/github/reazen/relude-reason-react/master.svg)](https://circleci.com/gh/reazen/relude-reason-react)
+[![GitHub CI](https://img.shields.io/github/workflow/status/reazen/relude-reason-react/CI/master)](https://github.com/reazen/relude-reason-react/actions)
 [![npm](https://img.shields.io/npm/v/relude-reason-react.svg)](https://www.npmjs.com/package/relude-reason-react)
 
 # Overview

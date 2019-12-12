@@ -16,3 +16,4 @@ node_modules/
 *.bs.js
 dist/
 lib/bs/
+/docs/coverage
