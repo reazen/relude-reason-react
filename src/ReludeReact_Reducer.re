@@ -49,111 +49,114 @@ type stateAndSideEffects('action, 'state) = {
 };
 
 let useReducer = (reducer: reducer('action, 'state), initialState: 'state) => {
+  let refReducer =
+    React.useRef(({state, sideEffects} as stateAndSideEffects, action) => {
+      let update = reducer(state, action);
+
+      switch (update) {
+      | NoUpdate => stateAndSideEffects
+
+      | Update(state) => {...stateAndSideEffects, state}
+
+      | UpdateWithSideEffect(state, sideEffect) => {
+          state,
+          sideEffects:
+            ref(
+              Belt.Array.concat(
+                sideEffects^,
+                [|SideEffect.Uncancelable.lift(sideEffect)|],
+              ),
+            ),
+        }
+
+      | UpdateWithCancelableSideEffect(state, cancelableSideEffect) => {
+          state,
+          sideEffects:
+            ref(
+              Belt.Array.concat(
+                sideEffects^,
+                [|SideEffect.Cancelable.lift(cancelableSideEffect)|],
+              ),
+            ),
+        }
+
+      | SideEffect(uncancelableSideEffect) => {
+          ...stateAndSideEffects,
+          sideEffects:
+            ref(
+              Belt.Array.concat(
+                stateAndSideEffects.sideEffects^,
+                [|SideEffect.Uncancelable.lift(uncancelableSideEffect)|],
+              ),
+            ),
+        }
+
+      | CancelableSideEffect(cancelableSideEffect) => {
+          ...stateAndSideEffects,
+          sideEffects:
+            ref(
+              Belt.Array.concat(
+                stateAndSideEffects.sideEffects^,
+                [|SideEffect.Cancelable.lift(cancelableSideEffect)|],
+              ),
+            ),
+        }
+
+      | UpdateWithIO(state, ioAction) =>
+        // The IO must have an 'action type for both the success and error channels - this
+        // way we know that the errors have been properly handled and translated to the appropriate action.
+        // Run the IO to get the success and error actions, then just send them.
+        // TODO: we don't have cancelable IOs (yet?)
+        let sideEffect: SideEffect.t('action, 'state) = (
+          context => {
+            ioAction
+            |> Relude.IO.unsafeRunAsync(
+                 fun
+                 | Ok(action) => context.send(action)
+                 | Error(action) => context.send(action),
+               );
+            None;
+          }
+        );
+        {
+          state,
+          sideEffects:
+            ref(
+              Belt.Array.concat(
+                stateAndSideEffects.sideEffects^,
+                [|sideEffect|],
+              ),
+            ),
+        };
+
+      | IO(ioAction) =>
+        let sideEffect: SideEffect.t('action, 'state) = (
+          context => {
+            ioAction
+            |> Relude.IO.unsafeRunAsync(
+                 fun
+                 | Ok(action) => context.send(action)
+                 | Error(action) => context.send(action),
+               );
+            None;
+          }
+        );
+        {
+          ...stateAndSideEffects,
+          sideEffects:
+            ref(
+              Belt.Array.concat(
+                stateAndSideEffects.sideEffects^,
+                [|sideEffect|],
+              ),
+            ),
+        };
+      };
+    });
+
   let ({state, sideEffects}, send) =
     React.useReducer(
-      ({state, sideEffects} as stateAndSideEffects, action) => {
-        let update = reducer(state, action);
-
-        switch (update) {
-        | NoUpdate => stateAndSideEffects
-
-        | Update(state) => {...stateAndSideEffects, state}
-
-        | UpdateWithSideEffect(state, sideEffect) => {
-            state,
-            sideEffects:
-              ref(
-                Belt.Array.concat(
-                  sideEffects^,
-                  [|SideEffect.Uncancelable.lift(sideEffect)|],
-                ),
-              ),
-          }
-
-        | UpdateWithCancelableSideEffect(state, cancelableSideEffect) => {
-            state,
-            sideEffects:
-              ref(
-                Belt.Array.concat(
-                  sideEffects^,
-                  [|SideEffect.Cancelable.lift(cancelableSideEffect)|],
-                ),
-              ),
-          }
-
-        | SideEffect(uncancelableSideEffect) => {
-            ...stateAndSideEffects,
-            sideEffects:
-              ref(
-                Belt.Array.concat(
-                  stateAndSideEffects.sideEffects^,
-                  [|SideEffect.Uncancelable.lift(uncancelableSideEffect)|],
-                ),
-              ),
-          }
-
-        | CancelableSideEffect(cancelableSideEffect) => {
-            ...stateAndSideEffects,
-            sideEffects:
-              ref(
-                Belt.Array.concat(
-                  stateAndSideEffects.sideEffects^,
-                  [|SideEffect.Cancelable.lift(cancelableSideEffect)|],
-                ),
-              ),
-          }
-
-        | UpdateWithIO(state, ioAction) =>
-          // The IO must have an 'action type for both the success and error channels - this
-          // way we know that the errors have been properly handled and translated to the appropriate action.
-          // Run the IO to get the success and error actions, then just send them.
-          // TODO: we don't have cancelable IOs (yet?)
-          let sideEffect: SideEffect.t('action, 'state) = (
-            context => {
-              ioAction
-              |> Relude.IO.unsafeRunAsync(
-                   fun
-                   | Ok(action) => context.send(action)
-                   | Error(action) => context.send(action),
-                 );
-              None;
-            }
-          );
-          {
-            state,
-            sideEffects:
-              ref(
-                Belt.Array.concat(
-                  stateAndSideEffects.sideEffects^,
-                  [|sideEffect|],
-                ),
-              ),
-          };
-
-        | IO(ioAction) =>
-          let sideEffect: SideEffect.t('action, 'state) = (
-            context => {
-              ioAction
-              |> Relude.IO.unsafeRunAsync(
-                   fun
-                   | Ok(action) => context.send(action)
-                   | Error(action) => context.send(action),
-                 );
-              None;
-            }
-          );
-          {
-            ...stateAndSideEffects,
-            sideEffects:
-              ref(
-                Belt.Array.concat(
-                  stateAndSideEffects.sideEffects^,
-                  [|sideEffect|],
-                ),
-              ),
-          };
-        };
-      },
+      refReducer |> React.Ref.current,
       {state: initialState, sideEffects: ref([||])},
     );
 
