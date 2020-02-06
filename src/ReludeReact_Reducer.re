@@ -40,20 +40,22 @@ let io = io => IO(io);
 // A reducer function takes the current state and an action and returns an update command
 type reducer('action, 'state) = ('state, 'action) => update('action, 'state);
 
-// The react useReducer state stores the actual component state, along with a ref array of
-// side effects.  The side effects are collected in the reducer functions, then handled
-// using a useEffect hook.  The component should not be, nor need to be aware of the sideEffect business.
+// This new state type stores the caller's state along with a mutable array of effects that
+// need to be run at the appropriate time. The effects are given to us via the `update`
+// constructors like SideEffect, UpdateWithIO, IO, etc.
 type stateAndSideEffects('action, 'state) = {
   state: 'state,
   sideEffects: ref(array(SideEffect.t('action, 'state))),
 };
 
-let useReducer =
-    (
-      ~useRef: bool=false,
-      reducer: reducer('action, 'state),
-      initialState: 'state,
-    ) => {
+/**
+ * Accepts a reducer function that emits `update` commands. Any updates that include side
+ * effects (SideEffect, UpdateWithIO, etc.) will be handled by enqueuing the side effects
+ * for execution outside of the reducer in a controlled fashion. The side effects are expected
+ * to dispatch further reducer actions to cause state changes, etc. IO-based effects are expected
+ * to produce actions that will be dispatched automatically.
+ */
+let useReducer = (reducer: reducer('action, 'state), initialState: 'state) => {
   // This wraps the given reducer function with the ability to capture the side effects
   // emitted by the various types of updates, and stick them in our mutable array of effects to run later
   let reducerWithSideEffects =
@@ -161,28 +163,16 @@ let useReducer =
     };
   };
 
-  // This takes the given initial state, and adds a mutable array of side effects which we capture in the reduce
-  // function, and then execute later using a normal React useEffect hook.
+  // Our new initial state is the caller's state, plus our initial empty array of effects to run
   let initialStateWithSideEffects = {
     state: initialState,
     sideEffects: ref([||]),
   };
 
-  // See https://github.com/reazen/relude-reason-react/issues/21
-  // We're experimenting with the ability to wrap the reducer function in a ref to prevent side effects from
-  // running multiple times. However, side effects are discouraged in reducers, and the best practice with this
-  // library is to manage side effects using the SideEffect or IO-based updates. Also, wrapping the reducer
-  // in a ref like this seems to cause some yet-to-be-diagnosed problems with prop updates.
+  // Plug our new reducer function into the React user reducer. This reducer takes the `update`s from the caller's
+  // reducers and enqueues the side effects in a mutable array for processing below in a separate useEffect
   let ({state, sideEffects}, send) =
-    if (useRef) {
-      let reducerWithSideEffectsRef = React.useRef(reducerWithSideEffects);
-      React.useReducer(
-        reducerWithSideEffectsRef |> React.Ref.current,
-        initialStateWithSideEffects,
-      );
-    } else {
-      React.useReducer(reducerWithSideEffects, initialStateWithSideEffects);
-    };
+    React.useReducer(reducerWithSideEffects, initialStateWithSideEffects);
 
   // This registers the side effects that were emitted by the reducer in a react effect hook.
   // When the hook runs, it will execute all the side effects and will
@@ -207,6 +197,6 @@ let useReducer =
     [|sideEffects|],
   );
 
-  // Finally, we return our initial state, and the send function for use in the component
+  // Finally, we return our initial state, and the send function for use in the calling component
   (state, send);
 };
