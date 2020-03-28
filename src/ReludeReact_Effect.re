@@ -282,3 +282,67 @@ let useIOOnMount: 'a 'e. (Relude.IO.t('a, 'e), 'a => unit, 'e => unit) => unit =
       },
       [||],
     );
+
+module UseAsyncResult = {
+  type action('a, 'e) =
+    | Run
+    | RunSuccess('a)
+    | RunFailure('e)
+    | RunAgain;
+
+  type state('a, 'e) = Relude.AsyncResult.t('a, 'e);
+
+  type send('a, 'e) = action('a, 'e) => unit;
+
+  let fromIO:
+    (Relude.IO.t('a, 'e), ('b, 'b) => bool, 'b) =>
+    (Relude.AsyncResult.t('a, 'e), unit => unit) =
+    (io_, eq_, key) => {
+      let reducer =
+        ReludeReact_Reducer.(
+          (state, action) =>
+            switch (action) {
+            | Run =>
+              UpdateWithIO(
+                state |> Relude.AsyncResult.toBusy,
+                {
+                  Relude.IO.bimap(
+                    ok => RunSuccess(ok),
+                    error => RunFailure(error),
+                    io_,
+                  );
+                },
+              )
+            | RunSuccess(ok) =>
+              ReludeReact_Reducer.Update(ok |> Relude.AsyncResult.ok)
+            | RunFailure(error) =>
+              ReludeReact_Reducer.Update(error |> Relude.AsyncResult.error)
+            | RunAgain =>
+              UpdateWithIO(
+                state
+                |> Relude.AsyncResult.foldByValue(
+                    Relude.AsyncResult.init,
+                    Relude.AsyncResult.reloadingOk,
+                    Relude.AsyncResult.reloadingError,
+                   ),
+                {
+                  Relude.IO.bimap(
+                    ok => RunSuccess(ok),
+                    error => RunFailure(error),
+                    io_,
+                  );
+                },
+              )
+            }
+        );
+
+      let (state, send) =
+        ReludeReact_Reducer.useReducer(reducer, Relude.AsyncResult.init);
+
+      useEffect1WithEq(() => send(Run), eq_, key);
+
+      let again = () => send(RunAgain);
+
+      (state, again);
+    };
+};
