@@ -33,13 +33,10 @@
   ],
   "bs-dev-dependencies": [
     "@glennsl/bs-jest",
-    "bs-fetch",
-    "bs-react-testing-library",
-    "relude-fetch"
+    "bs-react-testing-library"
   ],
   "warnings": {
     "error": "+a"
   },
   "refmt": 3
 }
-

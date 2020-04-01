@@ -37,7 +37,6 @@ module Counter = {
   };
 };
 
-
 describe("ReludeReact_Reducer", () => {
   // This tests the current "expected" behavior of useReducer in terms of how it handles
   // unmanaged side effects. The expected behavior is that uncontrolled side effects might
@@ -45,9 +44,14 @@ describe("ReludeReact_Reducer", () => {
   // a tweet by Dan Abramov, it should be expected. Overall, it's discouraged to have
   // unmanaged side effects in the reducer, so this is not something we would normally run into
   // if we're using the Relude SideEffect and IO-based update commands.
-  test("Reducer side effect might occur multiple times (so don't do side effects like this)", () => {
-    let renderResult = render(<Counter />);
-    renderResult |> getByText(~matcher=`Str("Increment")) |> FireEvent.click;
-    expect(Counter.clickCount^) |> toEqual(2);
-  });
+  test(
+    "Reducer side effect might occur multiple times (so don't do side effects like this)",
+    () => {
+      let renderResult = render(<Counter />);
+      renderResult
+      |> getByText(~matcher=`Str("Increment"), ~options=?None)
+      |> FireEvent.click(~eventInit=?None);
+      expect(Counter.clickCount^) |> toEqual(2);
+    },
+  )
 });
