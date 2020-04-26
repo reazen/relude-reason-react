@@ -11,7 +11,7 @@ Relude-based utilities for ReasonReact
 
 ## `ReludeReact.Reducer.useReducer` hook
 
-The `ReludeReact.Reducer.useReducer` hook was inspired by the original/pre-hooks [ReasonReact record API](https://reasonml.github.io/reason-react/docs/fr/jsx-2), and the hooks-based [reason-react-update](https://github.com/bloodyowl/reason-react-update) libray by [Matthias Le Brun (bloodyowl)](https://github.com/bloodyowl).
+The `ReludeReact.Reducer.useReducer` hook was inspired by the original/pre-hooks [ReasonReact record API](https://reasonml.github.io/reason-react/docs/fr/jsx-2), and the hooks-based [reason-react-update](https://github.com/bloodyowl/reason-react-update) library by [Matthias Le Brun (bloodyowl)](https://github.com/bloodyowl).
 
 `ReludeReact.Reducer.useReducer` is similar to the [React `useReducer` hook](https://reactjs.org/docs/hooks-reference.html#usereducer) with the key difference that the React `useReducer` only allows
 you to change the state, whereas the `ReludeReact.Reducer.useReducer` allows you to both change the state, and to safely emit side effects or `Relude.IO`-based actions, which can result in the emission of further actions.
