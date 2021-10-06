@@ -3,9 +3,8 @@
   "description": "Relude-based utilities for ReasonReact",
   "version": "0.10.0",
   "scripts": {
-    "clean": "bsb -clean-world",
-    "build": "bsb -make-world",
-    "watch": "bsb -make-world -w",
+    "build": "rescript build -with-deps",
+    "watch": "rescript build -with-deps -w",
     "test": "jest",
     "coverage": "jest --coverage --coverage-reporters=lcov --coverage-reporters=text --coverage-directory ./docs/coverage",
     "cleanbuild": "npm run clean && npm run build",
@@ -34,7 +33,7 @@
     "@glennsl/bs-jest": "~0.5.1",
     "bs-bastet": "~1.2.5",
     "bs-platform": "~7.2.2",
-    "bs-react-testing-library": "^0.6.0",
+    "bs-react-testing-library": "^0.7.0",
     "bsb-js": "~1.1.7",
     "parcel-bundler": "~1.12.4",
     "reason-react": "~0.7.0",
@@ -45,5 +44,8 @@
     "testPathIgnorePatterns": [
       "/node_modules/"
     ]
+  },
+  "dependencies": {
+    "rescript": "^9.1.4"
   }
 }
