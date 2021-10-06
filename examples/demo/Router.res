@@ -1,6 +1,6 @@
 @react.component
 let make = () => {
-  let url = ReasonReactRouter.useUrl()
+  let url = RescriptReactRouter.useUrl()
 
   switch url.path {
   | list{} => <AnimalListView />

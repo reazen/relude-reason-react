@@ -27,7 +27,7 @@
   ],
   "suffix": ".bs.js",
   "namespace": false,
-  "bs-dependencies": ["reason-react", "relude"],
+  "bs-dependencies": ["@rescript/react", "relude"],
   "bs-dev-dependencies": ["@glennsl/bs-jest", "bs-react-testing-library"],
   "warnings": {
     "error": "+a"

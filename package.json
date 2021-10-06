@@ -26,7 +26,7 @@
   "license": "MIT",
   "peerDependencies": {
     "bs-bastet": "~1.2.5",
-    "reason-react": "~0.7.0",
+    "@rescript/react": "^0.10.3",
     "relude": "~0.59.0"
   },
   "devDependencies": {
