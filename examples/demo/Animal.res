@@ -2,11 +2,11 @@ module Type = {
   type t =
     | Cat
     | Dog
-    | Fish;
-};
+    | Fish
+}
 
 type t = {
   animalType: Type.t,
   name: string,
   age: int,
-};
+}
