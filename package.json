@@ -5,6 +5,7 @@
   "scripts": {
     "build": "rescript build -with-deps",
     "watch": "rescript build -with-deps -w",
+    "clean": "rescript clean",
     "test": "jest",
     "coverage": "jest --coverage --coverage-reporters=lcov --coverage-reporters=text --coverage-directory ./docs/coverage",
     "cleanbuild": "npm run clean && npm run build",
